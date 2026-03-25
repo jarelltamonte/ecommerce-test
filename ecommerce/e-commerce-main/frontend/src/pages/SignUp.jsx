@@ -183,7 +183,7 @@ const SignUp = () => {
               <Lock className={iconBaseClass} />
               <input type="password" id="password" name="password" placeholder="••••••••" value={formData.password} onChange={handleChange} className={inputClass('password')} />
             </div>
-            {errors.password && <p className="text-sm text-red-600 mt-1 flex items-center"><AlertTriangle className="w-4 h-4 mr-1" />{errors.password}</p>}
+            {errors.password && <p className="text-sm text-red-600 mt-1 flex items-center" id="passwordError"><AlertTriangle className="w-4 h-4 mr-1" />{errors.password}</p>}
             {!errors.password && <small className="text-xs text-gray-500 mt-1 block">Min 8 chars, 1 uppercase, 1 lowercase, 1 number.</small>}
           </div>
 
@@ -194,13 +194,14 @@ const SignUp = () => {
               <Lock className={iconBaseClass} />
               <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} className={inputClass('confirmPassword')} />
             </div>
-            {errors.confirmPassword && <p className="text-sm text-red-600 mt-1 flex items-center"><AlertTriangle className="w-4 h-4 mr-1" />{errors.confirmPassword}</p>}
+            {errors.confirmPassword && <p className="text-sm text-red-600 mt-1 flex items-center" id="confirmPasswordError"><AlertTriangle className="w-4 h-4 mr-1" />{errors.confirmPassword}</p>}
           </div>
 
           {/* Submit Button */}
           <div className='pt-2'>
             <button 
               type="submit" 
+              id="signUpButton"
               disabled={isSubmitting || shouldRedirect} 
               style={{ backgroundColor: 'var(--color-primary-accent)', color: 'var(--color-primary-dark)' }}
               className={`w-full flex items-center justify-center py-3 px-4 rounded-full font-bold transition-all duration-300 transform hover:scale-[1.01] shadow-lg focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-[var(--color-primary-accent)] ${
@@ -219,7 +220,7 @@ const SignUp = () => {
           
           {/* Messages */}
           {submitMessage && (
-            <p className={`mt-4 p-3 rounded-xl text-center font-semibold flex items-center justify-center ${
+            <p id="registerMessage"  className={`mt-4 p-3 rounded-xl text-center font-semibold flex items-center justify-center ${
               submitMessage.includes('successful') ? 'bg-[var(--color-light-accent)] text-[var(--color-primary-dark)]' : 'bg-red-100 text-red-700'
             }`}>
               {submitMessage.includes('successful') ? <CheckCircle className="w-5 h-5 mr-2" style={{ color: 'var(--color-primary-accent)' }} /> : <AlertTriangle className="w-5 h-5 mr-2" />}

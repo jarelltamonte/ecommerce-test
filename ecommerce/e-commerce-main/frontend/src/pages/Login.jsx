@@ -164,12 +164,13 @@ const Login = () => {
           <div className='text-center'>
             <button
               type="submit"
+              id="loginButton"
               disabled={isSubmitting}
               className="w-full h-12 flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full shadow-lg transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed transform hover:scale-[1.01]"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="animate-spin mr-2 w-5 h-5" />
+                  <Loader2 className="animate-spin mr-2 w-5 h-5" id="logging in" />
                   Logging in...
                 </>
               ) : (
@@ -182,7 +183,7 @@ const Login = () => {
           </div>
           
           {submitMessage && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-center justify-center text-red-600 text-sm font-medium">
+            <div id="error-login" className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-center justify-center text-red-600 text-sm font-medium">
               <AlertCircle className="w-4 h-4 mr-2" />
               {submitMessage}
             </div>
