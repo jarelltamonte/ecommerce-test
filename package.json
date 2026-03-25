@@ -1,0 +1,19 @@
+{
+  "name": "e-commerce-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "Jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "chromedriver": "^146.0.6",
+    "selenium-webdriver": "^4.41.0"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0"
+  }
+}
