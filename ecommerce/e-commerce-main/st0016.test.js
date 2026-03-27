@@ -1,11 +1,10 @@
 const { Builder } = require("selenium-webdriver");
 const assert = require("assert");
 
-test("should navigate to the login page", async () => {
+test("should display form errors", async () => {
   let driver = await new Builder().forBrowser("chrome").build();
-  await driver.get("http://localhost:5174/signup");
+  await driver.get("http://localhost:5173/signup");
   try {
-    // Add some debugging - check if elements exist
     console.log("Looking for firstName field...");
     let firstNameField = await driver.findElement({ id: "firstName" });
     console.log("Found firstName field");
@@ -21,11 +20,9 @@ test("should navigate to the login page", async () => {
     let submitButton = await driver.findElement({ id: "signUpButton" });
     console.log("Found submit button, clicking...");
 
-    // Click the submit button, not the message element
     await submitButton.click();
     console.log("Clicked submit button");
 
-    // Wait for the error message to appear
     console.log("Waiting for error message...");
     await driver.wait(async () => {
       try {
@@ -37,7 +34,7 @@ test("should navigate to the login page", async () => {
         console.log("Message element not found yet:", e.message);
         return false;
       }
-    }, 10000); // Increased timeout
+    }, 10000); 
 
     console.log("Error message found, checking content...");
     let errorElement = await driver.findElement({ id: "registerMessage" });
@@ -48,7 +45,9 @@ test("should navigate to the login page", async () => {
     console.log("Expected text:", expectedText);
 
     assert.strictEqual(actualText, expectedText);
+
+    console.log("Test passed: Form validation error displayed.");
   } finally {
     await driver.quit();
   }
-}, 15000); // Increased test timeout
+}, 15000); 

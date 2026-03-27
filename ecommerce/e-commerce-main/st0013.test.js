@@ -6,16 +6,16 @@ jest.setTimeout(30000);
 test("should navigate to the login page", async () => {
   let driver = await new Builder().forBrowser("chrome").build();
   try {
-    await driver.get("http://localhost:5174/");
+    await driver.get("http://localhost:5173/signup");
     
-    await driver.findElement({ id: "contactLink" }).click();
+    await driver.findElement({ id: "loginLinkk" }).click();
     
     let currentUrl = await driver.getCurrentUrl();
-    let expectedUrl = "http://localhost:5174/contact";
+    let expectedUrl = "http://localhost:5173/login";
     
     expect(currentUrl).toBe(expectedUrl);
     
-    console.log("Test passed: Navigation to Contact page successful.");
+    console.log("Test passed: Navigation to Login page from Sign up successful.");
   } finally {
     await driver.quit();
   }

@@ -84,16 +84,14 @@ const NavBar = () => {
         )}
       </nav>
 
-      {/* Right Side: Conditional Login/Logout Button */}
       <div className="ml-auto flex-shrink-0 flex items-center space-x-4">
         {isLoggedIn && user ? (
-          // --- LOGGED IN STATE ---
           <>
-            <span className="hidden sm:flex items-center text-sm font-medium text-gray-700">
+            <span id="welcome-user" className="hidden sm:flex items-center text-sm font-medium text-gray-700">
               <UserIcon className="w-4 h-4 mr-2" />
               Welcome, {user.username || user.email}
             </span>
-            <button className={logoutButtonClass} onClick={onLogoutClick}>
+            <button id="logoutButton" className={logoutButtonClass} onClick={onLogoutClick}>
               <LogOut className={logoutIconClass} />
               Log Out
             </button>
@@ -151,7 +149,6 @@ const NavBar = () => {
             About
           </Link>
 
-          {/* Also add welcome/logout to mobile menu */}
           {isLoggedIn && user?.role === 'Admin' && (
             <Link 
               to="/admin" 
@@ -165,7 +162,7 @@ const NavBar = () => {
           
           {isLoggedIn && user && (
             <div className="w-full pt-4 border-t border-gray-300">
-              <span className="flex items-center text-lg font-medium text-gray-700 mb-4">
+              <span id="welcome-user" className="flex items-center text-lg font-medium text-gray-700 mb-4">
                 <UserIcon className="w-5 h-5 mr-3" />
                 Welcome, {user.username || user.email}
               </span>

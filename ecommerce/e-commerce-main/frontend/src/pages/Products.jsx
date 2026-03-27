@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Image, ShoppingCart, AlertTriangle, Search, Filter, ChevronDown, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Image, ShoppingCart, AlertTriangle, Search, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ProductCardSkeleton from '../components/ProductCardSkeleton.jsx'; // Import the skeleton
 
+
 // Base URL for your Express backend
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050';
 
 // --- Product Card Component ---
 const ProductCard = ({ product }) => {
@@ -17,9 +18,11 @@ const ProductCard = ({ product }) => {
     const [imageSrc, setImageSrc] = useState(imageUrl);
 
     // Helper to handle navigation to the detail page
+    const productId = product._id?.$oid || product._id || product.id || product._id?.toString?.() || '';
+
     const handleClick = () => {
-        const id = product._id.$oid || product._id;
-        navigate(`/product-details/${id}`);
+        if (!productId) return;
+        navigate(`/product-details/${productId}`);
     };
 
     // Fallback function for broken images
@@ -29,6 +32,7 @@ const ProductCard = ({ product }) => {
 
     return (
         <div 
+            id={`productCard-${productId || 'unknown'}`}
             className="group bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 border border-gray-100 cursor-pointer"
             onClick={handleClick} 
         >
@@ -68,6 +72,7 @@ const ProductCard = ({ product }) => {
                             e.stopPropagation(); // Prevent triggering the card click when clicking the button
                             handleClick();
                         }}
+                        id="addToCartButton"
                         className="flex items-center text-[var(--color-primary-dark)] px-5 py-2.5 rounded-full text-sm font-bold shadow-md 
                         transform transition-all duration-200 ease-out
                         hover:scale-105 hover:shadow-lg hover:brightness-110
@@ -92,10 +97,6 @@ const ProductPage = () => {
     const [searchQuery, setSearchQuery] = useState(''); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
-    // State for custom dropdown
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const dropdownRef = useRef(null);
 
     // Helper function to extract and clean categories
     const extractCategories = (data) => {
@@ -149,25 +150,12 @@ const ProductPage = () => {
         fetchProducts();
     }, [selectedCategory, sortBy, searchQuery, categories.length]); 
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdownOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [dropdownRef]);
+
 
     const renderContent = () => {
-        // --- SKELETON LOADING STATE ---
         if (loading) {
             return (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 pb-12">
-                    {/* Render 6 skeleton cards as placeholders */}
                     {[...Array(6)].map((_, index) => (
                         <ProductCardSkeleton key={index} />
                     ))}
@@ -236,67 +224,46 @@ const ProductPage = () => {
                         <input
                             type="text"
                             placeholder="Keyword..."
+                            id="searchInput"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className={`${inputTransitionClass} pl-10 bg-white`}
                             style={{ borderColor: 'var(--color-primary-dark)' }}
                         />
                     </div>
+                    
+                    {searchQuery && (
+                        <p className="text-xs text-gray-600 mt-2 font-medium" id="search-results-message">
+                            Showing results for <span className="text-blue-600 font-semibold">"{searchQuery}"</span>
+                        </p>
+                    )}
                 </div>
                 
-                {/* Custom Animated Category Dropdown */}
-                <div className="mb-6" ref={dropdownRef}>
-                    <label className="block text-sm font-semibold mb-2 text-gray-700">Category</label>
+                <div className="mb-6">
+                    <label htmlFor="categoryDropdown" className="block text-sm font-semibold mb-2 text-gray-700">Category</label>
                     <div className="relative">
-                        {/* Trigger Button */}
-                        <button
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className={`w-full p-3 bg-white border rounded-xl shadow-sm flex justify-between items-center text-left transition-all duration-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-accent)] ${isDropdownOpen ? 'ring-2 ring-[var(--color-primary-accent)] border-transparent' : ''}`}
+                        <select
+                            id="categoryDropdown"
+                            value={selectedCategory}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            className="w-full p-3 bg-white border rounded-xl shadow-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-accent)] hover:shadow-md transition-all duration-300 cursor-pointer"
                             style={{ borderColor: 'var(--color-primary-dark)' }}
                         >
-                            <span className={`${!selectedCategory ? 'text-gray-500' : 'text-gray-800 font-medium'}`}>
-                                {selectedCategory || "All Categories"}
-                            </span>
-                            <ChevronDown 
-                                className={`w-5 h-5 text-gray-500 transition-transform duration-300 ease-in-out ${isDropdownOpen ? 'rotate-180' : ''}`} 
-                            />
-                        </button>
-
-                        {/* Dropdown Menu with smooth transition */}
-                        <div 
-                            className={`absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden transition-all duration-300 ease-in-out origin-top transform ${
-                                isDropdownOpen 
-                                    ? 'opacity-100 scale-y-100 max-h-60' 
-                                    : 'opacity-0 scale-y-95 max-h-0 pointer-events-none'
-                            }`}
-                        >
-                            <div className="overflow-y-auto max-h-60">
-                                <button
-                                    onClick={() => {
-                                        setSelectedCategory('');
-                                        setIsDropdownOpen(false);
-                                    }}
-                                    className={`w-full px-4 py-3 text-left text-sm hover:bg-blue-50 transition-colors duration-150 flex items-center justify-between ${selectedCategory === '' ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-700'}`}
-                                >
-                                    All Categories
-                                    {selectedCategory === '' && <span className="w-2 h-2 rounded-full bg-blue-600"></span>}
-                                </button>
-                                {categories.map((category) => (
-                                    <button
-                                        key={category}
-                                        onClick={() => {
-                                            setSelectedCategory(category);
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className={`w-full px-4 py-3 text-left text-sm hover:bg-blue-50 transition-colors duration-150 flex items-center justify-between border-t border-gray-50 ${selectedCategory === category ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-700'}`}
-                                    >
-                                        {category}
-                                        {selectedCategory === category && <span className="w-2 h-2 rounded-full bg-blue-600"></span>}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                            <option value="">All Categories</option>
+                            <option id="category-clothing" value="Clothing">Clothing</option>
+                            <option id="category-accessories" value="Accessories">Accessories</option>
+                            <option id="category-electronics" value="Electronics">Electronics</option>
+                            <option id="category-furniture" value="Furniture">Furniture</option>
+                            <option id="category-home-and-kitchen" value="Home & Kitchen">Home & Kitchen</option>
+                            <option id="category-sports-and-outdoors" value="Sports & Outdoors">Sports & Outdoors</option>
+                        </select>
                     </div>
+                    
+                    {selectedCategory && (
+                        <p className="text-xs text-gray-600 mt-2 font-medium" id="category-filter-message">
+                            Filtering by <span className="text-blue-600 font-semibold">"{selectedCategory}"</span>
+                        </p>
+                    )}
                 </div>
             </aside>
 
@@ -313,26 +280,35 @@ const ProductPage = () => {
                     </div>
                     
                     {/* Sort Dropdown */}
-                    <div className="mt-4 md:mt-0 flex items-center space-x-3 bg-white p-1 rounded-lg">
-                        <label htmlFor="sort" className="text-sm font-semibold whitespace-nowrap px-2" style={{ color: 'var(--color-primary-dark)' }}>
-                            Sort by:
-                        </label>
-                        <div className="relative">
-                            <select
-                                id="sort"
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value)}
-                                className="p-2 pr-8 bg-transparent border-none font-medium text-gray-700 focus:ring-0 cursor-pointer hover:text-blue-600 transition-colors duration-200"
-                            >
-                                <option value="">Recommended</option>
-                                <option value="price_asc">Price: Low to High</option>
-                                <option value="price_desc">Price: High to Low</option>
-                            </select>
+                    <div className="mt-4 md:mt-0 flex flex-col items-end space-y-2">
+                        <div className="flex items-center space-x-3 bg-white p-1 rounded-lg">
+                            <label htmlFor="sort" className="text-sm font-semibold whitespace-nowrap px-2" style={{ color: 'var(--color-primary-dark)' }}>
+                                Sort by:
+                            </label>
+                            <div className="relative">
+                                <select
+                                    id="sort"
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="p-2 pr-8 bg-transparent border-none font-medium text-gray-700 focus:ring-0 cursor-pointer hover:text-blue-600 transition-colors duration-200"
+                                >
+                                    <option value="">Recommended</option>
+                                    <option id="price_asce" value="price_asc">Price: Low to High</option>
+                                    <option id="price_desce" value="price_desc">Price: High to Low</option>
+                                </select>
+                            </div>
                         </div>
+                        
+                    
+                        {sortBy && (
+                            <div id="sort-message" className="text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded-md border border-blue-200">
+                                {sortBy === 'price_asc' && 'Ascending price view is showing'}
+                                {sortBy === 'price_desc' && 'Descending price view is showing'}
+                            </div>
+                        )}
                     </div>
                 </header>
 
-                {/* Dynamic Content */}
                 {renderContent()}
                 
             </main>

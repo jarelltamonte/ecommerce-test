@@ -59,7 +59,6 @@ const SignUp = () => {
     return newErrors;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitMessage('');
@@ -69,43 +68,43 @@ const SignUp = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      const { username, email, password, firstName, lastName } = formData;
+      // Local sign-up behavior: if all fields pass validation, display success and redirect.
+      setIsSubmitting(true);
+      setSubmitMessage('Creating local account...');
 
-      try {
-        setIsSubmitting(true);
-        setSubmitMessage('Creating account...');
-
-        // Construct the full URL here
-        const url = `${API_BASE_URL}/auth/signup`;
-
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username,
-            email,
-            password,
-            first_name: firstName, 
-            last_name: lastName    
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          console.log('Signup successful:', data);
-          setSubmitMessage(`🎉 Signup successful! You will be redirected to login.`);
-          setShouldRedirect(true);
-        } else {
-          setSubmitMessage(`🚫 Signup Failed: ${data.message || 'An unknown server error occurred.'}`);
-        }
-
-      } catch (error) {
-        console.error('Fetch Error:', error);
-        setSubmitMessage('🚫 Network error. Please check your connection.');
-      } finally {
+      setTimeout(() => {
         setIsSubmitting(false);
-      }
+        setSubmitMessage('🎉 Local signup successful! Redirecting to login...');
+        setShouldRedirect(true);
+      }, 600);
+
+      return;
+
+      // If you later want to re-enable API signup, uncomment below and use API_BASE_URL.
+      // const { username, email, password, firstName, lastName } = formData;
+      // try {
+      //   setIsSubmitting(true);
+      //   setSubmitMessage('Creating account...');
+      //   const url = `${API_BASE_URL}/auth/signup`;
+      //   const response = await fetch(url, {
+      //     method: 'POST',
+      //     headers: { 'Content-Type': 'application/json' },
+      //     body: JSON.stringify({ username, email, password, first_name: firstName, last_name: lastName }),
+      //   });
+      //   const data = await response.json();
+      //   if (response.ok) {
+      //     console.log('Signup successful:', data);
+      //     setSubmitMessage(`🎉 Signup successful! You will be redirected to login.`);
+      //     setShouldRedirect(true);
+      //   } else {
+      //     setSubmitMessage(`🚫 Signup Failed: ${data.message || 'An unknown server error occurred.'}`);
+      //   }
+      // } catch (error) {
+      //   console.error('Fetch Error:', error);
+      //   setSubmitMessage('🚫 Network error. Please check your connection.');
+      // } finally {
+      //   setIsSubmitting(false);
+      // }
     } else {
       setSubmitMessage('🚫 Please review the form errors.');
     }

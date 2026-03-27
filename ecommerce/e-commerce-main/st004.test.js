@@ -6,12 +6,12 @@ jest.setTimeout(30000);
 test("should navigate to the login page", async () => {
   let driver = await new Builder().forBrowser("chrome").build();
   try {
-    await driver.get("http://localhost:5174/");
+    await driver.get("http://localhost:5173/");
     
     await driver.findElement({ id: "loginButton" }).click();
     
     let currentUrl = await driver.getCurrentUrl();
-    let expectedUrl = "http://localhost:5174/login";
+    let expectedUrl = "http://localhost:5173/login";
     
     expect(currentUrl).toBe(expectedUrl);
     

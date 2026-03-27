@@ -6,7 +6,7 @@ import AuthRedirectModal from '../components/AuthRedirectModal.jsx';
 import { FastAverageColor } from "fast-average-color"; 
 import { AuthContext } from '../components/AuthContext.jsx';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050';
 
 const ProductDetails = () => { 
     const navigate = useNavigate();
@@ -174,11 +174,11 @@ const ProductDetails = () => {
                     <div className="md:w-1/2 pt-2 flex flex-col">
                         
                         <div className="flex-grow">
-                            <h1 className="text-4xl lg:text-5xl font-extrabold mb-6 leading-tight tracking-tight" style={{ color: 'var(--color-primary-dark)' }}>
+                            <h1 id="product-name" className="text-4xl lg:text-5xl font-extrabold mb-6 leading-tight tracking-tight" style={{ color: 'var(--color-primary-dark)' }}>
                                 {product.name}
                             </h1>
                             
-                            <p className="text-gray-600 leading-relaxed mb-8 text-lg">
+                            <p id="product-description" className="text-gray-600 leading-relaxed mb-8 text-lg">
                                 {product.description}
                             </p>
 
@@ -219,13 +219,13 @@ const ProductDetails = () => {
 
                         <div className="mt-auto">
                             <div className="mb-6 flex items-baseline space-x-4">
-                                <span className="text-5xl font-extrabold tracking-tight" style={{ color: 'var(--color-secondary-highlight)' }}>
+                                <span id="product-price" className="text-5xl font-extrabold tracking-tight" style={{ color: 'var(--color-secondary-highlight)' }}>
                                     ${product.price ? product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A'}
                                 </span>
                             </div>
 
                             <div className="text-sm font-semibold mb-8">
-                                <span className={`inline-flex items-center px-4 py-1.5 rounded-full transition-transform duration-300 hover:scale-105 ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                <span id="product-stock" className={`inline-flex items-center px-4 py-1.5 rounded-full transition-transform duration-300 hover:scale-105 ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                                     <span className={`w-2 h-2 rounded-full mr-2 ${product.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
                                     {product.stock > 0 ? `In Stock (${product.stock} units)` : 'Out of Stock'}
                                 </span>

@@ -3,19 +3,19 @@ const assert = require("assert");
 
 jest.setTimeout(30000); 
 
-test("should navigate to the login page", async () => {
+test("should navigate to the signup page", async () => {
   let driver = await new Builder().forBrowser("chrome").build();
   try {
-    await driver.get("http://localhost:5174/forgot-password");
+    await driver.get("http://localhost:5173/login");
     
-    await driver.findElement({ id: "backToLoginButtonFP" }).click();
+    await driver.findElement({ id: "signUpLink" }).click();
     
     let currentUrl = await driver.getCurrentUrl();
-    let expectedUrl = "http://localhost:5174/login";
+    let expectedUrl = "http://localhost:5173/signup";
     
     expect(currentUrl).toBe(expectedUrl);
     
-    console.log("Test passed: Navigation to Login page successful.");
+    console.log("Test passed: Navigation to Signup page successful.");
   } finally {
     await driver.quit();
   }
